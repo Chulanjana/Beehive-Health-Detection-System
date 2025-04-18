@@ -17,6 +17,7 @@ def read_temp_hum_inside():
             time.sleep(1)
     return None, None
 
+
 def read_temp_hum_outside():
     for _ in range(3):
         try:
