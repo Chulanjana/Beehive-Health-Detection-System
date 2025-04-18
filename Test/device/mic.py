@@ -37,7 +37,7 @@ def record_audio_and_extract_mfcc(duration=10, sr=22050):
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as tmp:
         sf.write(tmp.name, audio_np, sr)
         y, _ = librosa.load(tmp.name, sr=sr)
-        mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
-        mfcc_mean = np.mean(mfcc, axis=1)
+        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+        mfccs_mean = np.mean(mfccs.T, axis=0)
 
-    return mfcc_mean.tolist()
+    return mfccs_mean
