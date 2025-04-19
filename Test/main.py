@@ -14,7 +14,7 @@ from device.mic import record_audio_and_extract_mfcc
 load_dotenv()
 
 # Load ML models
-clf1, clf2, iso_forest = load_models()
+model_qp, model_qa_package, model_anomaly = load_models()
 
 # Firebase Realtime Database URL
 FIREBASE_DB_URL = os.getenv("FIREBASE_DB_URL")
@@ -54,9 +54,9 @@ while True:
 
     # 3. Run inference
     results = run_inference(
-        clf1,
-        clf2,
-        iso_forest,
+        model_qp,
+        model_qa_package,
+        model_anomaly,
         outside_temp,
         outside_hum,
         inside_temp,
@@ -70,7 +70,8 @@ while True:
         "outside_humidity": outside_hum,
         "inside_temp": inside_temp,
         "inside_humidity": inside_hum,
-        "queen_status": results["queen_acceptance"],
+        "queen_presence": results["queen_presence"],
+        "queen_acceptance":results["queen_acceptance"],
         "anomaly": results["anomaly"],
         "last_updated": datetime.datetime.utcnow().isoformat() + "Z",
     }
