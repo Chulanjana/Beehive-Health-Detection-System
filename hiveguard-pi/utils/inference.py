@@ -5,14 +5,14 @@ import pandas as pd
 
 def load_models():
     model_qp = joblib.load("models/queen_presence_model.pkl")
-    model_qa_package = joblib.load("models/queen_acceptance_model_package.pkl")
+    model_qa = joblib.load("models/queen_acceptance_model.pkl")
     model_anomaly = joblib.load("models/bee_sound_anomaly_model.pkl")
 
-    return model_qp, model_qa_package, model_anomaly
+    return model_qp, model_qa, model_anomaly
 
 
 def run_inference(
-    model_qp, model_qa_package, model_anomaly, w_temp, w_hum, h_temp, h_hum, mfccs
+    model_qp, model_qa, model_anomaly, w_temp, w_hum, h_temp, h_hum, mfccs
 ):
     # Combined Feature Vector
     all_features = np.concatenate(([h_temp, h_hum, w_temp, w_hum], mfccs))
@@ -28,15 +28,7 @@ def run_inference(
     anomaly = model_anomaly.predict(features_df)[0]  # -1 is anomaly
 
     if queen_presence == 1:
-        model = model_qa_package["model"]
-        scaler = model_qa_package["scaler"]
-        label_encoder = model_qa_package["label_encoder"]
-
-        input_scaled = scaler.transform(features_df)
-        prediction = model.predict(input_scaled)
-        predicted_label = label_encoder.inverse_transform(prediction)
-
-        queen_acceptance = predicted_label[0]
+        queen_acceptance = model_qa.predict(features_df)[0]
 
     return {
         "queen_presence": "Yes" if queen_presence == 1 else "No",
